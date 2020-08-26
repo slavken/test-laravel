@@ -7,6 +7,7 @@ use Faker\Generator as Faker;
 use Illuminate\Support\Str;
 
 $factory->define(Article::class, function (Faker $faker) {
+    // Или sentence()
     $title = $faker->text(100);
 
     return [
