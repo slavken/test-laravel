@@ -10,7 +10,7 @@ class LikeController extends Controller
 {
     function get($id)
     {
-        $article = Article::find($id)
+        $article = Article::findOrFail($id)
             ->likes;
 
         return response()->json(['result' => $article]);
@@ -18,7 +18,7 @@ class LikeController extends Controller
 
     function set(Request $request)
     {
-        $article = Article::find($request->id);
+        $article = Article::findOrFail($request->id);
 
         $article->increment('likes');
 

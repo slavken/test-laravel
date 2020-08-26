@@ -14,4 +14,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'MainController@index')->name('main');
-Route::resource('articles', 'ArticleController');
+Route::get('articles', 'ArticleController@index')->name('articles.index');
+Route::get('articles/{slug}', 'ArticleController@show')->name('articles.show');
