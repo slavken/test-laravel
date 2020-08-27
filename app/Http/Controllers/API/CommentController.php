@@ -6,6 +6,7 @@ use App\Article;
 use App\Http\Controllers\Controller;
 use App\Jobs\SendComment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CommentController extends Controller
 {
@@ -17,19 +18,28 @@ class CommentController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'subject' => 'required|max:255',
             'body' => 'required'
         ]);
 
-        $article = Article::findOrFail($request->id);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false, 
+                'message' => $validator->errors()
+            ], 400);
+        }
+
+        if (!Article::find($request->id)) {
+            return response()->json(['status' => false], 404);
+        }
 
         SendComment::dispatch([
-            'id' => $article->id, 
+            'id' => $request->id, 
             'subject' => $request->subject,
             'body' => $request->body
         ])->delay(now()->addSeconds(10))->onQueue('comments');
 
-        return response()->json([], 201);
+        return response()->json(['status' => true], 201);
     }
 }
